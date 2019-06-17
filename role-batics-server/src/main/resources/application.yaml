@@ -1,0 +1,18 @@
+pagehelper:
+  helper-dialect: postgresql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+app:
+  id: role-batics-service
+
+snowFlake:
+  workInfo:
+    datacenterId: 2
+    machineId: 1
+#apollo:
+#  meta: http://192.168.7.210:8080/
+#  cluster: dev
+#  bootstrap:
+#    enabled: true
+#    namespaces: application,TEST1.Common

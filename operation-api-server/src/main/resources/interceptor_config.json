@@ -1,0 +1,23 @@
+{
+  "plans":
+    {
+      "addUserIdToCreatedBy" :[ { "src": "userId", "dest": "createdBy", "method":["POST","GET"]}],
+
+      "addUserIdToUpdatedBy" : [ { "src": "userId", "dest": "updatedBy", "method":["POST"]}]
+
+    },
+
+  "rules":
+  {
+    "merchant-service" : [
+      {
+        "url": "/merchants$",
+        "plan": ["addUserIdToCreatedBy","addUserIdToUpdatedBy"]
+      }
+    ]
+
+  }
+
+
+
+}

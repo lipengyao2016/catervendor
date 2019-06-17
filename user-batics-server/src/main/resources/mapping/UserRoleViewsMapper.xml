@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vendor.mapper.UserRoleViewsMapper" >
+  <resultMap id="BaseResultMap" type="com.vendor.bean.user.UserRoleViews" >
+    <result column="name" property="name" jdbcType="CHAR" />
+    <result column="ownerUUID" property="owneruuid" jdbcType="CHAR" />
+    <result column="mobile" property="mobile" jdbcType="CHAR" />
+    <result column="roleUUID" property="roleuuid" jdbcType="CHAR" />
+    <result column="userUuid" property="useruuid" jdbcType="CHAR" />
+    <result column="userCreateAt" property="usercreateat" jdbcType="TIMESTAMP" />
+    <result column="userModifiedAt" property="usermodifiedat" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    name, ownerUUID, mobile, roleUUID, userUuid, userCreateAt, userModifiedAt
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.vendor.bean.user.UserRoleViewsCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from user_role_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.vendor.bean.user.UserRoleViewsCriteria" >
+    delete from user_role_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.vendor.bean.user.UserRoleViews" >
+    insert into user_role_view (name, ownerUUID, mobile, 
+      roleUUID, userUuid, userCreateAt, 
+      userModifiedAt)
+    values (#{name,jdbcType=CHAR}, #{owneruuid,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, 
+      #{roleuuid,jdbcType=CHAR}, #{useruuid,jdbcType=CHAR}, #{usercreateat,jdbcType=TIMESTAMP}, 
+      #{usermodifiedat,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.vendor.bean.user.UserRoleViews" >
+    insert into user_role_view
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="owneruuid != null" >
+        ownerUUID,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="roleuuid != null" >
+        roleUUID,
+      </if>
+      <if test="useruuid != null" >
+        userUuid,
+      </if>
+      <if test="usercreateat != null" >
+        userCreateAt,
+      </if>
+      <if test="usermodifiedat != null" >
+        userModifiedAt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=CHAR},
+      </if>
+      <if test="owneruuid != null" >
+        #{owneruuid,jdbcType=CHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="roleuuid != null" >
+        #{roleuuid,jdbcType=CHAR},
+      </if>
+      <if test="useruuid != null" >
+        #{useruuid,jdbcType=CHAR},
+      </if>
+      <if test="usercreateat != null" >
+        #{usercreateat,jdbcType=TIMESTAMP},
+      </if>
+      <if test="usermodifiedat != null" >
+        #{usermodifiedat,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.vendor.bean.user.UserRoleViewsCriteria" resultType="java.lang.Integer" >
+    select count(*) from user_role_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update user_role_view
+    <set >
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=CHAR},
+      </if>
+      <if test="record.owneruuid != null" >
+        ownerUUID = #{record.owneruuid,jdbcType=CHAR},
+      </if>
+      <if test="record.mobile != null" >
+        mobile = #{record.mobile,jdbcType=CHAR},
+      </if>
+      <if test="record.roleuuid != null" >
+        roleUUID = #{record.roleuuid,jdbcType=CHAR},
+      </if>
+      <if test="record.useruuid != null" >
+        userUuid = #{record.useruuid,jdbcType=CHAR},
+      </if>
+      <if test="record.usercreateat != null" >
+        userCreateAt = #{record.usercreateat,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.usermodifiedat != null" >
+        userModifiedAt = #{record.usermodifiedat,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update user_role_view
+    set name = #{record.name,jdbcType=CHAR},
+      ownerUUID = #{record.owneruuid,jdbcType=CHAR},
+      mobile = #{record.mobile,jdbcType=CHAR},
+      roleUUID = #{record.roleuuid,jdbcType=CHAR},
+      userUuid = #{record.useruuid,jdbcType=CHAR},
+      userCreateAt = #{record.usercreateat,jdbcType=TIMESTAMP},
+      userModifiedAt = #{record.usermodifiedat,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

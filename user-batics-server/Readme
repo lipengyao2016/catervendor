@@ -1,0 +1,44 @@
+http://localhost:9010/api/v1/roles?createdAt=["2019-03-07 17: 35: 44", "2019-03-19 16: 31: 54"]
+
+http://localhost:9010/api/v1/roles?status=[preEnabled,enabled]
+
+http://localhost:9010/api/v1/roles?name=*好多*
+
+http://localhost:9010/api/v1/roles?uuid=afe9d695e4ce43e39fd43a
+
+http://localhost:9010/api/v1/roles?id=[12,13]
+
+
+http://localhost:9013/api/v1/users/
+ {
+        "name": "wangyun",
+        "roleUUID":"aUu4Zz0788NughRrzYh7dw",
+        "ownerUUID":"dCqavvEkybc3ZZj65Vc05g"
+},
+
+
+http://localhost:9013/api/v1/users?page=3&rows=3
+
+
+http://localhost:9013/api/v1/users/87305bc24d8d4c0a995751
+
+
+ {
+        "name": "wangfeikkkk",
+        "ownerUUID":"dCqavvEkybc3ZZj65Vc05g",
+    "userRoleMemberShips": [
+        {
+            "roleuuid": "bUu4Zz0788NughRrzYh7dw"
+        },
+      {
+            "roleuuid": "cUu4Zz0788NughRrzYh7dw"
+        }
+    ]
+}
+
+
+http://localhost:9013/api/v1/userRoleOrgs?orgaUUID=19iO00E5VGuequAEQ6aFWA&page=2&rows=1
+
+http://localhost:9013/api/v1/users?name=*wangfei*&createdAt=["2019-05-22 01: 35: 44", "2019-05-23 23: 31: 54"]&page=3&rows=2
+
+http://localhost:9013/api/v1/userRoleViews?owneruuid=19iO00E5VGuequAEQ6aFWA&usercreateat=["2019-02-21 01: 35: 44", "2019-02-23 23: 31: 54"]

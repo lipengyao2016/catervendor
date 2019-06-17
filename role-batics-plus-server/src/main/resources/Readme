@@ -1,0 +1,35 @@
+http://localhost:9010/api/v1/roles?createdAt=["2019-03-07 17: 35: 44", "2019-03-19 16: 31: 54"]
+
+http://localhost:9010/api/v1/roles?status=[preEnabled,enabled]
+
+http://localhost:9010/api/v1/roles?name=*好多*
+
+http://localhost:9010/api/v1/roles?uuid=afe9d695e4ce43e39fd43a
+
+http://localhost:9010/api/v1/roles?id=[12,13]
+
+http://localhost:9012/api/v1/roles
+{
+    "name": "wangyuan"
+},
+
+http://localhost:9012/api/v1/roles?createdAt=["2019-03-08 00: 35: 44", "2019-03-19 16: 31: 54"]&status=enabled
+
+http://localhost:9012/api/v1/roles/batchUpdate?roleUUIDsStr=[ee08ccc1370d412781a5f2,8f906f33af4e4e1aac9c5f]
+{
+    "ownertype": "merchant"
+}
+
+
+http://localhost:9012/api/v1/roles/batchCreate
+    [
+        {
+            "name": "wangyuanaa"
+        },
+       {
+            "name": "wangyuanbb"
+        }
+ ]
+
+ http://localhost:9012/api/v1/roles/batchDelete
+ ["3458b8df61214f818ae495","c23b303dff1b406bb0edf0"]

@@ -1,0 +1,10 @@
+pagehelper:
+  helper-dialect: postgresql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+snowFlake:
+  workInfo:
+    datacenterId: 1
+    machineId: 1
