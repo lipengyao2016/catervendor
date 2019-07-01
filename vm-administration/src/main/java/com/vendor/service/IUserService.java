@@ -1,23 +1,20 @@
 package com.vendor.service;
 
+import com.vendor.admin.User;
+import com.vendor.admin.UserRoleExt;
+import com.vendor.queryvo.admin.UserQueryVo;
 
-import com.vendor.entity.ListResponse;
-import com.vendor.bean.user.UserRoleOrgs;
-import com.vendor.bean.user.Users;
-import com.vendor.queryvo.user.UserCreateVo;
-import com.vendor.queryvo.user.UserQueryVo;
-import com.vendor.bean.user.UserRoleOrgQueryVo;
+/**
+ * <p>
+ *  服务类
+ * </p>
+ *
+ * @author lpy
+ * @since 2019-06-20
+ */
+public interface IUserService extends IBasePlusService<User,UserQueryVo> {
 
+    public Long create(UserRoleExt obj);
 
-public interface IUserService extends IBaseService<Users,UserQueryVo> {
-
-    public Users create(UserCreateVo userCreateVo);
-
-    public Users update(UserCreateVo userCreateVo);
-
-
-    public ListResponse<UserRoleOrgs> getUserRole(UserRoleOrgQueryVo userRoleOrgQueryVo, Integer page, Integer rows);
-
-    public String betchAddUser();
-
+    public UserRoleExt login(User obj);
 }

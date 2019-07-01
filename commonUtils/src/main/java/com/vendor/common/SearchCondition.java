@@ -2,6 +2,7 @@ package com.vendor.common;
 
 import com.vendor.dto.IDto;
 import com.vendor.utils.DateTimeUtil;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -15,16 +16,19 @@ import java.util.Map;
  *
  */
 @SuppressWarnings("serial")
+@ApiModel("列表查询基类")
 public class SearchCondition implements IDto {
 	private Integer pageNum = 1; // 查询结果分页参数：第几页
 	private Integer pageSize = 10; // 查询结果分页参数：每页数据条数
 	private String userIds; // 根据登录用户权限过滤出来的能查看的所有其他用户(包括自己)登录账号数据(以及和查询条件里的用户信息所取得的并集)，格式为'user1','user2'
 	private String createdBy; // 查询条件里的用户登录账号或姓名
 	private String userLoginId; // 登录用户账号
+	@ApiModelProperty(value = "开始时间",example = "2019-01-10 09:42:02")
 	private String startTime;
+	@ApiModelProperty(value = "结束时间",example = "2019-12-10 09:42:02")
 	private String endTime;
 	private Map<String, EOrderRule> orderFeildMap; // 查询排序字段名及排序规则
-	private String dataStatus; // 根据是否从PC端登录由拦截器赋值Y/N/null可直接用于sql中,PC端登录值为空，移动端则为Y
+	private String status; // 根据是否从PC端登录由拦截器赋值Y/N/null可直接用于sql中,PC端登录值为空，移动端则为Y
 
 	public SearchCondition() {
 	}
@@ -53,12 +57,12 @@ public class SearchCondition implements IDto {
 		return replaceFirst;
 	}
 
-	public String getDataStatus() {
-		return dataStatus;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setDataStatus(String dataStatus) {
-		this.dataStatus = dataStatus;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Integer getPageNum() {

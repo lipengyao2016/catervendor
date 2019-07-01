@@ -1,6 +1,10 @@
 package com.vendor.utils;
 
-public class ApiResponse {
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value="API接口返回对象")
+public class ApiResponse<T> {
 
     private static String ERRMSG_SUC = "success";
     private static Integer ERRCODE_SUC = 0;
@@ -15,8 +19,11 @@ public class ApiResponse {
         this.errCode = errCode;
     }
 
+
+    @ApiModelProperty(value = "错误码,0为成功，其它为失败。")
     private Integer errCode;
 
+    @ApiModelProperty(value = "错误消息,success为成功，其它为失败。")
     private String errMessage;
 
     public ApiResponse(Integer errCode,String errMessage)
@@ -39,6 +46,17 @@ public class ApiResponse {
     {
         return ApiResponse.sucApiResonse;
     }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    @ApiModelProperty(value = "返回的具体业务数据。")
+    private T data;
 
 
 }

@@ -1,54 +1,84 @@
 package com.vendor.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.vendor.dto.BaseDto;
+import io.swagger.annotations.ApiModelProperty;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
+import java.util.List;
 
-public class UserVo {
+public class UserVo extends BaseDto{
+    @ApiModelProperty(hidden=true,example = "")
+    private Long id;
 
-    private Integer id;
-
+    @ApiModelProperty(value="登录账户",example = "zhoujs")
     private String userLoginId;
 
-    private Integer positionSeqId;
+    @ApiModelProperty(value="职位",example = "")
+    private Long positionSeqId;
 
+    @ApiModelProperty(value="名称",example = "周靖松")
     private String name;
 
+    @ApiModelProperty(value="密码",example = "123456")
     private String currentPassword;
 
+    @ApiModelProperty(value="性别",example = "M")
     private String gender;
 
+    @ApiModelProperty(value="电话",example = "15323494048")
     private String phone;
 
+    @ApiModelProperty(value="邮箱",example = "15323494048@qq.com")
     private String email;
 
+    @ApiModelProperty(value="微信",example = "15323494048")
     private String weixin;
 
+    @ApiModelProperty(value="附件",example = "")
     private String attachmentKey;
 
-    private Date lastLoginTime;
-
-    private String lastLoginIp;
-
-    private String status;
-
-    private String createdBy;
-
-    private Date createdDt;
-
-    private String updatedBy;
-
-    private Date updatedDt;
-
-    private String lastLoginChannel;
-
+    @ApiModelProperty(value="部门编码",example = "1")
     private String departmentId;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value="入职时间",example = "2019-07-11 00:00:00")
     private Date entryDate;
 
-    public Integer getId() {
+    @ApiModelProperty(hidden=true,example = "")
+    private Date lastLoginTime;
+    @ApiModelProperty(hidden=true,example = "")
+    private String lastLoginIp;
+    @ApiModelProperty(hidden=true,example = "")
+    private String lastLoginChannel;
+    @ApiModelProperty(value="角色集合",example = "")
+    private List<RoleVo> roleVoList;
+    @ApiModelProperty(value="角色名称集",example = "")
+    private String roleNameStr;
+
+    public String getRoleNameStr() {
+        return roleNameStr;
+    }
+
+    public void setRoleNameStr(String roleNameStr) {
+        this.roleNameStr = roleNameStr;
+    }
+
+    public List<RoleVo> getRoleVoList() {
+        return roleVoList;
+    }
+
+    public void setRoleVoList(List<RoleVo> roleVoList) {
+        this.roleVoList = roleVoList;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -60,11 +90,11 @@ public class UserVo {
         this.userLoginId = userLoginId == null ? null : userLoginId.trim();
     }
 
-    public Integer getPositionSeqId() {
+    public Long getPositionSeqId() {
         return positionSeqId;
     }
 
-    public void setPositionSeqId(Integer positionSeqId) {
+    public void setPositionSeqId(Long positionSeqId) {
         this.positionSeqId = positionSeqId;
     }
 
@@ -138,46 +168,6 @@ public class UserVo {
 
     public void setLastLoginIp(String lastLoginIp) {
         this.lastLoginIp = lastLoginIp == null ? null : lastLoginIp.trim();
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy == null ? null : createdBy.trim();
-    }
-
-    public Date getCreatedDt() {
-        return createdDt;
-    }
-
-    public void setCreatedDt(Date createdDt) {
-        this.createdDt = createdDt;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy == null ? null : updatedBy.trim();
-    }
-
-    public Date getUpdatedDt() {
-        return updatedDt;
-    }
-
-    public void setUpdatedDt(Date updatedDt) {
-        this.updatedDt = updatedDt;
     }
 
     public String getLastLoginChannel() {

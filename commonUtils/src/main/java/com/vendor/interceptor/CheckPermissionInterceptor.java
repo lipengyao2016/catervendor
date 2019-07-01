@@ -18,6 +18,8 @@ import com.vendor.common.RestfulResponse;
 import com.vendor.core.*;
 import com.vendor.dto.PermissionDto;
 import com.vendor.feign.administration.AdministrationFeignCommon;
+import com.vendor.utils.JWTUtils;
+import com.vendor.vo.PermissionVo;
 import com.vendor.vo.UserLoginInfoVo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -44,20 +46,19 @@ public class CheckPermissionInterceptor extends HandlerInterceptorAdapter {
 		operationMap.put("DELETE", "删除");
 		operationMap.put("GET", "查询");
 	}
-
 	@Autowired
 	private AdministrationFeignCommon feignClient;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handle) throws Exception {
+		response.setContentType("application/json; charset=UTF-8");
+		RestfulResponse<Void> restful = new RestfulResponse<Void>();
+
 		final HandlerMethod handlerMethod = (HandlerMethod) handle;
 		final Method method = handlerMethod.getMethod();
 		final Class<?> clazz = method.getDeclaringClass();
 
-		request.setAttribute("loginUserInfo", null);
-		request.setAttribute("openId", null);
-		request.setAttribute("originalAppId", null);
-		request.setAttribute("scode", null);
+//			request.setAttribute("loginUserInfo", null);
 		String sessionId = request.getSession().getId();
 		if (sessionId == null || "".equals(sessionId)) {
 			sessionId = (String) request.getSession().getAttribute("sessionId");
@@ -65,90 +66,22 @@ public class CheckPermissionInterceptor extends HandlerInterceptorAdapter {
 
 		UserLoginInfoVo loginVo = null;
 		String token = request.getHeader("token");
-		String loginUserInfo = request.getHeader("loginUserInfo");
-
-		response.setContentType("application/json; charset=UTF-8");
-		RestfulResponse<Void> restful = new RestfulResponse<Void>();
-		if (loginUserInfo != null && !"".equals(loginUserInfo)) {
+		if(token != null && !"".equals(token)) {
 			try {
-				loginUserInfo = URLDecoder.decode(loginUserInfo, "UTF-8");
-				JSONObject loginUserJson = JSONObject.parseObject(loginUserInfo);
-				request.setAttribute("isSystemCall", loginUserJson.getString("isSystemCall"));
-				loginVo = JSONObject.toJavaObject(loginUserJson, UserLoginInfoVo.class);
-				LOGGER.info("登录用户信息：" + loginUserInfo);
-			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
+				String loginInfoVoJSON = JWTUtils.verifyToken(token);
+				loginVo = JSONObject.parseObject(loginInfoVoJSON, UserLoginInfoVo.class);
+				LOGGER.info("登录用户信息：" + loginVo);
+			} catch (Exception e1) {
 				restful.setCode(ECode.NOT_LOGGED_IN.getCode());
-				restful.setMessage("登录用户信息编码格式转换出错！");
+				restful.setMessage("登录用户信息转换出错！");
 				response.getWriter().print(JSONObject.toJSONString(restful));
 				response.getWriter().close();
 				return false;
 			}
 		}
 
-		// 微商城
-		String originalAppId = request.getHeader("originalAppId");
-		String openId = request.getHeader("openId");
-		request.setAttribute("openId", openId);
-		request.setAttribute("originalAppId", originalAppId);
-
-		// 外部经销商代码
-		String scode = request.getHeader("scode");
-		request.setAttribute("scode", scode);
-		if (loginVo != null) {
-			request.setAttribute("loginUserInfo", loginVo);
-		}
-
 		String currentRequestUrl = request.getRequestURL().toString();
 		System.out.println("当前请求url:" + currentRequestUrl);
-//		if (openId != null && !"".equals(openId) && originalAppId != null && !"".equals(originalAppId)) {
-//			// 获取本系统工厂信息
-//			if (!currentRequestUrl.contains("/factoryId/")) {
-//				String relevanceFactoryId = feignClient.getFactoryId(originalAppId);
-//				String factoryId = feignClient.findFactoryByRelevanceFactoryId(relevanceFactoryId,
-//						loginVo.getAgencyId());
-//				if (factoryId == null || "".equals(factoryId)) {
-//					throw new MessageException("未获取到厂家经销商信息！");
-//				}
-//
-//				FactoryVo f = feignClient.findFactoryDetail(factoryId);
-//				loginVo.setFactoryId(factoryId);
-//				loginVo.setAgencyId(f.getAgencyId());
-//				loginVo.setAgencyName(f.getAgencyName());
-//				loginVo.setIfAgencyUser("N");
-//				request.setAttribute("loginUserInfo", loginVo);
-//				return true;
-//			}
-//		}
-//
-//		if (scode != null && !"".equals(scode)) {
-//			if (!currentRequestUrl.contains("/agencyInfo/agency/customId/")) {
-//				String agencyId = feignClient.findAgencyIdBycustomId(scode);
-//				if (agencyId == null || "".equals(agencyId)) {
-//					throw new MessageException("未匹配到系统经销商!");
-//				}
-//
-//				loginVo = new UserLoginInfoVo();
-//				loginVo.setAgencyId(agencyId);
-//				loginVo.setIfAgencyUser("N");
-//				request.setAttribute("loginUserInfo", loginVo);
-//				return true;
-//			}
-//		}
-
-		// if ("Y".equals(json.getString("ifAgencyUser"))) {
-		// String agencyId = json.getString("agencyId");
-		// if (agencyId != null && !"".equals(agencyId)) {
-		// String status = feignClient.findAgencyStatus(agencyId);
-		// if (!"Y".equals(status)) {
-		// restful.setCode(ECode.NOT_LOGGED_IN.getCode());
-		// restful.setMessage("你所在的经销商已被禁用！");
-		// response.getWriter().print(JSONObject.toJSONString(restful));
-		// response.getWriter().close();
-		// return false;
-		// }
-		// }
-		// }
 
 		if (!handle.getClass().isAssignableFrom(HandlerMethod.class)) {
 			return true;
@@ -212,9 +145,8 @@ public class CheckPermissionInterceptor extends HandlerInterceptorAdapter {
 
 				// 需要权限认证
 				if (needPermission) {
-					Map<Integer, PermissionDto> permissionRestful = feignClient.findPermissionByUrl(requestUrl,
+					PermissionVo permissionRestful = feignClient.findPermissionByUrl(requestUrl,
 							requestMethod);
-					Collection<PermissionDto> list = permissionRestful.values();
 
 					// 外部系统调用直接返回
 //					String ifAgencyUser = loginVo.getIfAgencyUser();
@@ -227,14 +159,6 @@ public class CheckPermissionInterceptor extends HandlerInterceptorAdapter {
 //						return false;
 //					}
 
-//					String agencyId = loginVo.getAgencyId();
-//					if (agencyId == null || "".equals(agencyId)) {
-//						restful.setCode(ECode.UNAUTHORIZED.getCode());
-//						restful.setMessage("用户未代理任何经销商，无权限操作系统！");
-//						response.getWriter().print(JSONObject.toJSONString(restful));
-//						response.getWriter().close();
-//						return false;
-//					}
 
 					if (requestUrl.contains("/operationLogDatas")) {
 						String majorKeyId = request.getParameter("majorKeyId");
@@ -249,10 +173,10 @@ public class CheckPermissionInterceptor extends HandlerInterceptorAdapter {
 						return true;
 					}
 
-					if (list != null && list.size() > 0) {
+					if (permissionRestful != null) {
 						restful.setCode(ECode.UNAUTHORIZED.getCode());
 						restful.setMessage("你没有" + operationMap.get(requestMethod)
-								+ list.iterator().next().getPermissionName() + "的权限！");
+								+ permissionRestful.getName() + "的权限！");
 						response.getWriter().print(JSONObject.toJSONString(restful));
 						response.getWriter().close();
 						return false;
@@ -268,7 +192,6 @@ public class CheckPermissionInterceptor extends HandlerInterceptorAdapter {
 				return false;
 			}
 		}
-
 		return true;
 	}
 

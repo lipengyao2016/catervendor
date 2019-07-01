@@ -1,19 +1,20 @@
-pagehelper:
-  helper-dialect: mysql
-  reasonable: true
-  support-methods-arguments: true
-  params: count=countSql
-
 snowFlake:
   workInfo:
     datacenterId: 1
     machineId: 1
-
+eureka:
+  client:
+#    healthcheck:
+#      enabled: true #这个属性只能放在application.yml文件中，放在其他.yml中会出问题
+    serviceUrl:
+      defaultZone: http://localhost:8762/eureka/
+  instance:
+    prefer-ip-address: true
 spring:
   session:
     store-type: redis
   application:
-    name: system-administration
+    name: vm-administration
   http:
     encoding:
       force: true
@@ -24,26 +25,24 @@ spring:
       max-request-size: 2Mb   # Max request size，默认10M
   profiles:
     active:
-#    - dev
-#    - redis-dev
+    - dev
+    - redis-dev
 #    - test
 #    - redis-test
-    - pro
-    - redis-pro
+#    - pro
+#    - redis-pro
 mybatis:
-  type-aliases-package: com.by.crm.sysconfig.model
-  mapperLocations: classpath*:mybatis/mapper/**/*Mapper.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 mapper:
  not-empty: false
- identity: MYSQL
+ identity: POSTGRESQL
 pagehelper:
-  helperDialect: mysql
+  helperDialect: postgresql
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
-besedir: sysconfig
+besedir: administration
 
 hystrix:
   command:
@@ -75,23 +74,12 @@ verify:
     letter-qty: 4
 register:
   text: true
-#移动端使用由后端处理过的配置化菜单权限信息
-permission:
- map:
-  customerManagement: 客户管理
-  workLogManagement: 日常工作
-  channelManagement: 渠道管理
-  productManagement: 产品库管理
-  orderManagement: 订单管理
-  telephoneManagement: 电话营销
-  designManagement: 量尺管理
-  baiqiangManagement: 门店联赛
-  collegeManagement: 移动商学院
-  arrivalManagement: 到货管理
-  installManagement: 安装管理
-  caseInfoManagement: 案例库
-  assistantManagement: 助销工具
-  noticeManagement: 通知公告
-  reportManagement: 报表中心
-  targetManagement: 目标管理
-  onlineRetailers: 电商引流
+
+
+aliyun:
+  wxPrefix: t
+  wyPrefix: t
+  bucketName: t
+  accessKeyId: t
+  secretAccessKey: t
+  endpoint: t

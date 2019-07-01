@@ -31,9 +31,17 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
     DBEntityUtils dbEntityUtils;
 
     @Override
-    public boolean create(Object obj) {
+    public Long create(T obj) {
         dbEntityUtils.preCreate(obj);
-        return this.save(obj);
+        Long lId = null;
+        try {
+             lId = (Long) ReflectUtils.getField(obj,"id");
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return this.save(obj) ? lId : null;
     }
 
     @Override
@@ -45,7 +53,7 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
     }
 
     @Override
-    public ListResponse list(Object queryObj, Integer page, Integer rows) {
+    public ListResponse list(QY_T queryObj, Integer page, Integer rows) {
 
         if(page == null)
         {
@@ -90,9 +98,14 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
                     // log.info("field name:" + f.getName() + ",value:" + value);
 
                     Field curField = ReflectUtils.getFieldInfo(entityCls,f.getName());
+
+
+
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     if (value != null && curField != null) {
                         String fieldName = f.getName();
+                        String dbEntityName = StrUtils.camelToUnderline(fieldName);
+
                         if (value.contains("[")) {
                             List<Object> valueList = GsonUtils.ToObjectList(value);
 
@@ -110,20 +123,26 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
                                         int beginVal = Integer.parseInt((String) valueList.get(0));
                                         int endVal = Integer.parseInt((String) valueList.get(1));
 
-                                        queryWrapper.between(f.getName(),beginVal,endVal);
+                                        queryWrapper.between(dbEntityName,beginVal,endVal);
+                                    }
+                                    else if( curField.getType().getName().equals(Long.class.getName()) )
+                                    {
+                                        Long beginVal = Long.parseLong((String) valueList.get(0));
+                                        Long endVal = Long.parseLong((String) valueList.get(1));
 
+                                        queryWrapper.between(dbEntityName,beginVal,endVal);
                                     }
                                     else if( curField.getType().getName().equals(Date.class.getName())  )
                                     {
                                         Date beginDate = sdf.parse((String) valueList.get(0));
                                         Date endDate = sdf.parse((String) valueList.get(1));
-                                        queryWrapper.between(f.getName(),beginDate,endDate);
+                                        queryWrapper.between(dbEntityName,beginDate,endDate);
                                     }
                                     else
                                     {
                                         String beginVal = (String) valueList.get(0);
                                         String endVal = (String) valueList.get(1);
-                                        queryWrapper.between(f.getName(),beginVal,endVal);
+                                        queryWrapper.between(dbEntityName,beginVal,endVal);
                                     }
 
                                 } catch (ParseException e) {
@@ -144,9 +163,16 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
                                         log.info("int valSta  :" + valSta);
                                         retList.add(((Long)valSta).intValue());
                                     }
-
-                                    queryWrapper.in(f.getName(),retList);
-
+                                    queryWrapper.in(dbEntityName,retList);
+                                }
+                                else if(curField.getType().getName().equals(Long.class.getName()))
+                                {
+                                    List<Long> retList = new ArrayList();
+                                    for (Object valSta : valueList) {
+                                        log.info("Long valSta  :" + valSta);
+                                        retList.add((Long)valSta);
+                                    }
+                                    queryWrapper.in(dbEntityName,retList);
                                 }
                                 else if(curField.getType().getName().equals(Date.class.getName()))
                                 {
@@ -155,7 +181,7 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
                                         log.info("date valSta  :" + valSta);
                                         retList.add(sdf.parse((String) valSta));
                                     }
-                                    queryWrapper.in(f.getName(),retList);
+                                    queryWrapper.in(dbEntityName,retList);
                                 }
                                 else
                                 {
@@ -164,7 +190,7 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
                                         log.info("int valSta  :" + valSta);
                                         retList.add((String) valSta);
                                     }
-                                    queryWrapper.in(f.getName(),retList);
+                                    queryWrapper.in(dbEntityName,retList);
                                 }
 
 
@@ -175,7 +201,6 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
                             if(value.startsWith("*"))
                             {
                                 bStartMofu = true;
-
                             }
                             if(value.endsWith("*"))
                             {
@@ -185,24 +210,27 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
 
                             if(bStartMofu && bEndMofu)
                             {
-                                queryWrapper.like(f.getName(),value);
+                                queryWrapper.like(dbEntityName,value);
                             }
                             else if(bStartMofu)
                             {
-                                queryWrapper.likeLeft(f.getName(),value);
+                                queryWrapper.likeLeft(dbEntityName,value);
                             }
                             else if(bEndMofu)
                             {
-                                queryWrapper.likeRight(f.getName(),value);
+                                queryWrapper.likeRight(dbEntityName,value);
                             }
 
                         } else {
-                            String fieldEqualMethodName = "and" + f.getName() + "EqualTo";
 
                             Object realVal ;
                             if( curField.getType().getName().equals(Integer.class.getName()) )
                             {
                                 realVal = Integer.parseInt(value);
+                            }
+                            else if( curField.getType().getName().equals(Long.class.getName()) )
+                            {
+                                realVal =  Long.parseLong(value);
                             }
                             else if( curField.getType().getName().equals(Date.class.getName()) )
                             {
@@ -213,7 +241,7 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
                                 realVal = value;
                             }
 
-                            queryWrapper.eq(f.getName(),realVal);
+                            queryWrapper.eq(dbEntityName,realVal);
                         }
                     }
 
@@ -239,7 +267,7 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
     }
 
     @Override
-    public boolean update(Long uuid, Object updateObj) throws DataNotFoundException {
+    public boolean update(Long uuid, T updateObj) throws DataNotFoundException {
         UpdateWrapper<T> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id",uuid);
 
@@ -256,7 +284,7 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
     }
 
     @Override
-    public boolean update(Object updateObj) throws DataNotFoundException {
+    public boolean update(T updateObj) throws DataNotFoundException {
         Long uuid = null ;
         try {
             uuid = (Long) ReflectUtils.getField(updateObj,"id");
@@ -269,7 +297,7 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
     }
 
     @Override
-    public boolean batchInsert(List record) {
+    public boolean batchInsert(List<T> record) {
         for (Object obj:record) {
             dbEntityUtils.preCreate(obj);
         }
@@ -277,7 +305,7 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
     }
 
     @Override
-    public boolean batchUpdate(List uuids, Object updateObj) throws DataNotFoundException {
+    public boolean batchUpdate(List<Long> uuids, T updateObj)  {
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("id",uuids);
 
@@ -287,7 +315,7 @@ public class BaseMybaticsPlusServiceImpl<M extends BaseMapper<T>, T,QY_T> extend
     }
 
     @Override
-    public boolean batchDelete(List uuids) {
+    public boolean batchDelete(List<Long> uuids) {
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("id",uuids);
 

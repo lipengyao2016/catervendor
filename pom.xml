@@ -28,6 +28,7 @@
     <module>./operation-api-server</module>
     <module>./merchant-server</module>
     <module>./role-batics-plus-server</module>
+    <module>./vm-administration</module>
   </modules>
 
 

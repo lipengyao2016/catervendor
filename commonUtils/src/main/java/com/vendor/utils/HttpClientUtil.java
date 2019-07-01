@@ -65,7 +65,7 @@ public class HttpClientUtil {
 		// 设置连接超时
 		configBuilder.setConnectTimeout(MAX_TIMEOUT);
 		// 设置读取超时
-		configBuilder.setSocketTimeout(MAX_TIMEOUT);
+		configBuilder.setSocketTimeout(MAX_TIMEOUT*50);
 		// 设置从连接池获取连接实例的超时
 		configBuilder.setConnectionRequestTimeout(MAX_TIMEOUT);
 		// 在提交请求之前 测试连接是否可用
@@ -202,7 +202,7 @@ public class HttpClientUtil {
 	 *            json对象
 	 * @return
 	 */
-	public static String doPost(String apiUrl, Object json) {
+	public static String doPost(String apiUrl, String jsonStr) {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		String httpStr = null;
 		HttpPost httpPost = new HttpPost(apiUrl);
@@ -210,7 +210,7 @@ public class HttpClientUtil {
 
 		try {
 			httpPost.setConfig(requestConfig);
-			StringEntity stringEntity = new StringEntity(json.toString(), "UTF-8");// 解决中文乱码问题
+			StringEntity stringEntity = new StringEntity(jsonStr, "UTF-8");// 解决中文乱码问题
 			stringEntity.setContentEncoding("UTF-8");
 			stringEntity.setContentType("application/json");
 			httpPost.setEntity(stringEntity);
@@ -239,7 +239,7 @@ public class HttpClientUtil {
 	 *            xml对象
 	 * @return
 	 */
-	public static String doPost(String apiUrl, String xmlInfo) {
+	public static String doPostXml(String apiUrl, String xmlInfo) {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		String httpStr = null;
 		HttpPost httpPost = new HttpPost(apiUrl);

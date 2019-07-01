@@ -6,7 +6,7 @@ import com.vendor.utils.DataNotFoundException;
 import java.util.List;
 
 public interface IBasePlusService<T,QY_T>  {
-     public boolean create(T obj);
+     public Long create(T obj);
      public  T get(Long uuid);
      public ListResponse<T> list(QY_T queryObj, Integer page, Integer rows);
      public  boolean update(Long uuid, T updateObj) throws DataNotFoundException;
